@@ -1,0 +1,32 @@
+name: SonarQube Analisia
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  build:
+    name: Build and Analyze
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Kodea deskargatu (Checkout)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Historia osoa behar da analisi zehatz erako
+          # 1. URRATSA: Analisia exekutatu
+      - name: SonarQube Scan exekutatu
+        uses: sonarsource/sonarqube-scan-action@v3.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+          # 2. URRATSA: Emaitza egiaztatu (Pipeline-a apurtu erroreak)
+      - name: Quality Gate Egiaztatu
+        uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
