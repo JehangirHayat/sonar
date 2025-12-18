@@ -1,165 +1,142 @@
 <?php
 
 /**
- * Clase de ejemplo con múltiples problemas de calidad
- * que SonarQube debería detectar
+ * Clase UserManager mejorada
+ * Seguridad, visibilidad y buenas prácticas aplicadas
  */
 class UserManager {
-    
-    // Variable no utilizada
-    private $unusedVariable = "no se usa";
-    
-    // Falta especificar visibilidad
-    var $oldStyleVariable;
-    
-    private $conn;
-    
-    public function __construct() {
-        // Credenciales hardcodeadas (security hotspot)
-        $this->conn = mysqli_connect("localhost", "root", "password123", "database");
-    }
-    
-    /**
-     * Método con SQL injection vulnerable
-     */
-    public function getUserById($id) {
-        // SQL Injection - no se usa prepared statement
-        $query = "SELECT * FROM users WHERE id = " . $id;
-        $result = mysqli_query($this->conn, $query);
-        return mysqli_fetch_assoc($result);
-    }
-    
-    /**
-     * Método con complejidad ciclomática alta
-     */
-    public function processUser($user, $action, $role, $status) {
-        // Demasiados niveles de anidamiento
-        if ($user != null) {
-            if ($action == "create") {
-                if ($role == "admin") {
-                    if ($status == "active") {
-                        echo "Admin creado activo";
-                    } else {
-                        echo "Admin creado inactivo";
-                    }
-                } else if ($role == "user") {
-                    if ($status == "active") {
-                        echo "Usuario creado activo";
-                    } else {
-                        echo "Usuario creado inactivo";
-                    }
-                }
-            } else if ($action == "update") {
-                if ($role == "admin") {
-                    echo "Admin actualizado";
-                } else {
-                    echo "Usuario actualizado";
-                }
-            } else if ($action == "delete") {
-                echo "Usuario eliminado";
-            }
+
+    private mysqli $conn;
+
+    public function __construct(string $host, string $user, string $password, string $database) {
+        $this->conn = new mysqli($host, $user, $password, $database);
+        if ($this->conn->connect_error) {
+            throw new Exception("Conexión fallida: " . $this->conn->connect_error);
         }
     }
-    
+
     /**
-     * Función con código duplicado
+     * Obtiene un usuario por ID usando prepared statements para evitar SQL injection
      */
-    public function validateEmail($email) {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return false;
+    public function getUserById(int $id): ?array {
+        $stmt = $this->conn->prepare("SELECT * FROM users WHERE id = ?");
+        if (!$stmt) {
+            throw new Exception("Error al preparar la consulta");
         }
-        if (strlen($email) > 255) {
-            return false;
+        $stmt->bind_param("i", $id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        return $result->fetch_assoc() ?: null;
+    }
+
+    /**
+     * Procesa usuario según acción, rol y estado
+     */
+    public function processUser(array $user, string $action, string $role, string $status): void {
+        if (!$user) return;
+
+        match ($action) {
+            "create" => $this->handleCreate($role, $status),
+            "update" => $this->handleUpdate($role),
+            "delete" => $this->handleDelete(),
+            default => throw new Exception("Acción desconocida: $action")
+        };
+    }
+
+    private function handleCreate(string $role, string $status): void {
+        $statusText = ($status === "active") ? "activo" : "inactivo";
+        echo match($role) {
+            "admin" => "Admin creado $statusText",
+            "user" => "Usuario creado $statusText",
+            default => "Rol desconocido"
+        };
+    }
+
+    private function handleUpdate(string $role): void {
+        echo ($role === "admin") ? "Admin actualizado" : "Usuario actualizado";
+    }
+
+    private function handleDelete(): void {
+        echo "Usuario eliminado";
+    }
+
+    /**
+     * Valida correo electrónico (reutilizando una función)
+     */
+    public function isValidEmail(string $email): bool {
+        return filter_var($email, FILTER_VALIDATE_EMAIL) !== false && strlen($email) <= 255;
+    }
+
+    /**
+     * Muestra nombre de usuario de manera segura (prevención XSS)
+     */
+    public function displayUserName(string $name): void {
+        echo "<h1>Bienvenido " . htmlspecialchars($name, ENT_QUOTES, 'UTF-8') . "</h1>";
+    }
+
+    /**
+     * Lee un archivo de manera segura
+     */
+    public function readFile(string $filename): string {
+        $path = realpath("/var/www/uploads/" . $filename);
+        if (!$path || !str_starts_with($path, "/var/www/uploads/")) {
+            throw new Exception("Ruta inválida");
         }
-        return true;
+        return file_get_contents($path);
     }
-    
+
     /**
-     * Función con código duplicado (casi idéntica a la anterior)
+     * Calcula el total inicializando variables
      */
-    public function checkEmail($email) {
-        if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            return false;
-        }
-        if (strlen($email) > 255) {
-            return false;
-        }
-        return true;
-    }
-    
-    /**
-     * XSS vulnerability - no sanitiza output
-     */
-    public function displayUserName($name) {
-        echo "<h1>Bienvenido " . $name . "</h1>";
-    }
-    
-    /**
-     * Método que no maneja excepciones
-     */
-    public function readFile($filename) {
-        // Path traversal vulnerability
-        $content = file_get_contents("/var/www/uploads/" . $filename);
-        return $content;
-    }
-    
-    /**
-     * Variable no inicializada
-     */
-    public function calculateTotal($items) {
-        // $total no está inicializada
+    public function calculateTotal(array $items): float {
+        $total = 0.0;
         foreach ($items as $item) {
-            $total += $item['price'];
+            $total += $item['price'] ?? 0;
         }
         return $total;
     }
-    
+
     /**
-     * Uso de funciones deprecadas
+     * Uso de función moderna en lugar de funciones deprecated
      */
-    public function oldFunction() {
-        // mysql_* está deprecado
-        $result = mysql_query("SELECT * FROM users");
-        return mysql_fetch_array($result);
+    public function getAllUsers(): array {
+        $result = $this->conn->query("SELECT * FROM users");
+        return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
     }
-    
+
     /**
-     * Comparación débil cuando debería ser estricta
+     * Comparación estricta
      */
-    public function checkValue($value) {
-        if ($value == true) { // Debería usar ===
-            return "verdadero";
-        }
-        return "falso";
+    public function checkValue(mixed $value): string {
+        return ($value === true) ? "verdadero" : "falso";
     }
-    
+
     /**
-     * Bloque catch vacío (code smell)
+     * Operación segura con manejo de excepciones
      */
-    public function riskyOperation() {
+    public function riskyOperation(): void {
         try {
-            $result = $this->someOperation();
+            $this->someOperation();
         } catch (Exception $e) {
-            // Catch vacío - mala práctica
+            error_log("Error en operación riesgosa: " . $e->getMessage());
         }
     }
-    
+
     /**
-     * Función sin return type hint
+     * Función con tipo de retorno
      */
-    public function getData() {
+    public function getData(): array {
         return ["data" => "value"];
     }
-    
-    // Constante no utilizada
-    const UNUSED_CONSTANT = "nunca usado";
+
+    private function someOperation(): void {
+        // Simulación de operación
+    }
 }
 
-// Código en el scope global (code smell)
-$globalVar = "variable global";
-
-// Variable superglobal sin sanitizar
-$user_input = $_GET['input'];
-echo $user_input;
-
+// Uso seguro de inputs
+$user_input = filter_input(INPUT_GET, 'input', FILTER_SANITIZE_STRING);
+if ($user_input !== null) {
+    echo htmlspecialchars($user_input, ENT_QUOTES, 'UTF-8');
+}
 ?>
