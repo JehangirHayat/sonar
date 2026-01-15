@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SonarQube Quality Profile for AI-Generated Code Detection
+  Description: Custom quality profile combining security, reliability, and AI-specific rules
+-->
+<profile>
+  <name>AI Code Detection</name>
+  <language>php</language>
+  <description>Quality profile optimized for detecting AI-generated code patterns and common AI coding errors</description>
+  
+  <!-- === SECURITY RULES (Highest Priority) === -->
+  <rule>
+    <repositoryKey>phpsecurity</repositoryKey>
+    <key>S3649</key>  <!-- SQL Injection -->
+    <priority>CRITICAL</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>phpsecurity</repositoryKey>
+    <key>S2082</key>  <!-- Request Parameter in File Path -->
+    <priority>CRITICAL</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>phpsecurity</repositoryKey>
+    <key>S2089</key>  <!-- File Path Injection -->
+    <priority>CRITICAL</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>phpsecurity</repositoryKey>
+    <key>S2092</key>  <!-- Set-Cookie Security -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <!-- === RELIABILITY RULES === -->
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1764</key>  <!-- Identical Expression -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1751</key>  <!-- Useless Overriding Method -->
+    <priority>MINOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1788</key>  <!-- Unused Private Method -->
+    <priority>MINOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <!-- === CODE SMELL RULES === -->
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1450</key>  <!-- Unused Variable -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1444</key>  <!-- Undefined Constant -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S2006</key>  <!-- Deprecated Function Usage -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1133</key>  <!-- Deprecated Code -->
+    <priority>MINOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <!-- === AI-SPECIFIC CUSTOM RULES === -->
+  
+  <!-- AI Pattern Rules -->
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-pattern-001</key>  <!-- Excessive Template Comments -->
+    <priority>INFO</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-pattern-002</key>  <!-- Generic Template Comments -->
+    <priority>INFO</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-pattern-003</key>  <!-- Generic Variable Names -->
+    <priority>MINOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-pattern-004</key>  <!-- Magic Numbers -->
+    <priority>MINOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-pattern-005</key>  <!-- Long Method Chains -->
+    <priority>MINOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-pattern-006</key>  <!-- Generic Error Messages -->
+    <priority>MINOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <!-- AI Error Rules -->
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-001</key>  <!-- Empty Try-Catch -->
+    <priority>BLOCKER</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-002</key>  <!-- SQL Injection -->
+    <priority>CRITICAL</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-003</key>  <!-- XSS -->
+    <priority>CRITICAL</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-004</key>  <!-- Type Juggling -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-005</key>  <!-- Missing Input Validation -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-006</key>  <!-- Unsafe eval() -->
+    <priority>CRITICAL</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-007</key>  <!-- File Inclusion -->
+    <priority>CRITICAL</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-008</key>  <!-- Hardcoded Credentials -->
+    <priority>CRITICAL</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-009</key>  <!-- Missing Strict Types -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-010</key>  <!-- Error Suppression -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-011</key>  <!-- Unchecked Return Values -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>ai-detection</repositoryKey>
+    <key>ai-error-012</key>  <!-- Deprecated Functions -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <!-- === PHP SPECIFIC RULES === -->
+  
+  <!-- Type Safety -->
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1044</key>  <!-- Serializable Magic Methods -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S2004</key>  <!-- Error in __toString -->
+    <priority>CRITICAL</priority>
+    <status>READY</status>
+  </rule>
+  
+  <!-- Exception Handling -->
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S2091</key>  <!-- Empty Catch Clause -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1786</key>  <!-- Exception Thrown in __toString -->
+    <priority>BLOCKER</priority>
+    <status>READY</status>
+  </rule>
+  
+  <!-- === CODING STANDARDS === -->
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1045</key>  <!-- Line Length -->
+    <priority>MINOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1452</key>  <!-- Disable PHP tags -->
+    <priority>MAJOR</priority>
+    <status>READY</status>
+  </rule>
+  
+  <rule>
+    <repositoryKey>php</repositoryKey>
+    <key>S1116</key>  <!-- Unused Parameters -->
+    <priority>MINOR</priority>
+    <status>READY</status>
+  </rule>
+
+</profile>

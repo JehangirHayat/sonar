@@ -1,0 +1,240 @@
+{
+  "version": "1.0",
+  "description": "AI Code Detection Patterns for SonarQube Integration",
+  "patterns": [
+    {
+      "id": "AI-PATTERN-001",
+      "name": "Excessive Template Comments",
+      "pattern": "/\\/\\*[\\s\\S]{200,}?\\*\\//",
+      "weight": 3,
+      "severity": "INFO",
+      "description": "AI code often contains very long, detailed documentation comments",
+      "remediation": "Review and simplify excessive comments"
+    },
+    {
+      "id": "AI-PATTERN-002",
+      "name": "Generic Template Comments",
+      "pattern": "/(\\/\\/|[\\/*])\\s*(This method|The following function|In this section|Implementation)/i",
+      "weight": 4,
+      "severity": "INFO",
+      "description": "Generic template comments are hallmarks of AI-generated code",
+      "remediation": "Replace with specific, meaningful comments"
+    },
+    {
+      "id": "AI-PATTERN-003",
+      "name": "Overly Generic Variable Names",
+      "pattern": "/(\\bdata\\b|\\bresult\\b|\\boutput\\b|\\bitem\\b|\\btemp\\b|\\binfo\\b)/",
+      "weight": 2,
+      "severity": "MINOR",
+      "description": "AI tends to use very generic variable names",
+      "remediation": "Use more descriptive variable names reflecting purpose"
+    },
+    {
+      "id": "AI-PATTERN-004",
+      "name": "Magic Numbers in Loops",
+      "pattern": "/for\\s*\\(\\s*\\$i\\s*=\\s*0;\\s*\\$i\\s*<\\s*[0-9]+;/",
+      "weight": 2,
+      "severity": "MINOR",
+      "description": "Magic numbers are common in AI-generated loop constructs",
+      "remediation": "Replace with named constants"
+    },
+    {
+      "id": "AI-PATTERN-005",
+      "name": "Long Method Chains",
+      "pattern": "/->\\w+\\(\\)->\\w+\\(\\)->\\w+\\(\\)/",
+      "weight": 3,
+      "severity": "MINOR",
+      "description": "Fluent interfaces with long method chains are common in AI code",
+      "remediation": "Break into separate statements with intermediate variables"
+    },
+    {
+      "id": "AI-PATTERN-006",
+      "name": "Perfect Formatting Consistency",
+      "pattern": "/\\{\\s*[\\r\\n]+\\s*[\\r\\n]+\\s*\\}/",
+      "weight": 2,
+      "severity": "INFO",
+      "description": "Excessive whitespace in empty blocks suggests mechanical generation",
+      "remediation": "Normalize formatting"
+    },
+    {
+      "id": "AI-PATTERN-007",
+      "name": "Generic Error Messages",
+      "pattern": "/throw new Exception\\s*\\(\\s*[\"']Error[\"']\\s*\\)/",
+      "weight": 3,
+      "severity": "MINOR",
+      "description": "Generic error messages like 'Error' suggest AI generation",
+      "remediation": "Provide specific, descriptive error messages"
+    },
+    {
+      "id": "AI-PATTERN-008",
+      "name": "High Comment-to-Code Ratio",
+      "pattern": "RATIO_CHECK",
+      "weight": 3,
+      "severity": "INFO",
+      "description": "AI code typically has higher comment-to-code ratio",
+      "remediation": "Balance comments with actual code"
+    },
+    {
+      "id": "AI-PATTERN-009",
+      "name": "Overly Verbose Docblocks",
+      "pattern": "/@param\\s+\\w+\\s+\\$\\w+\\s*\\n\\s*\\*/",
+      "weight": 2,
+      "severity": "INFO",
+      "description": "Very detailed docblocks with empty descriptions suggest AI",
+      "remediation": "Ensure docblocks add meaningful documentation"
+    },
+    {
+      "id": "AI-PATTERN-010",
+      "name": "Missing Type Declarations",
+      "pattern": "/function\\s+\\w+\\s*\\([^)]*\\)\\s*(?!:\\s*\\w+)/",
+      "weight": 2,
+      "severity": "MINOR",
+      "description": "AI sometimes omits strict type declarations",
+      "remediation": "Add return type declarations and strict_types"
+    }
+  ],
+  "errors": [
+    {
+      "id": "AI-ERROR-001",
+      "name": "Empty Try-Catch Block",
+      "pattern": "/try\\s*\\{[^}]*\\}\\s*catch\\s*\\([^)]*\\)\\s*\\{[^}]{0,50}\\}/s",
+      "weight": 8,
+      "severity": "BLOCKER",
+      "description": "Empty or minimal catch blocks swallow exceptions - common AI mistake",
+      "remediation": "Handle exceptions properly with logging or meaningful error handling"
+    },
+    {
+      "id": "AI-ERROR-002",
+      "name": "SQL Injection Vulnerability",
+      "pattern": "/->prepare\\s*\\(\\s*[\"'][^\"']*\\$.*[^\"']*[\"']/",
+      "weight": 10,
+      "severity": "CRITICAL",
+      "description": "Variable interpolation in SQL queries - major security risk",
+      "remediation": "Use parameterized queries with bound variables"
+    },
+    {
+      "id": "AI-ERROR-003",
+      "name": "XSS Vulnerability",
+      "pattern": "/echo\\s+.*\\$_(?:GET|POST|REQUEST)\\[/",
+      "weight": 10,
+      "severity": "CRITICAL",
+      "description": "Direct output of unsanitized user input",
+      "remediation": "Use htmlspecialchars() or proper output encoding"
+    },
+    {
+      "id": "AI-ERROR-004",
+      "name": "Type Juggling",
+      "pattern": "/==\\s*(?![\"'])/",
+      "weight": 5,
+      "severity": "MAJOR",
+      "description": "Loose comparison (==) instead of strict equality (===)",
+      "remediation": "Use strict comparison operators"
+    },
+    {
+      "id": "AI-ERROR-005",
+      "name": "Missing Input Validation",
+      "pattern": "/\\$_(?:GET|POST|REQUEST)\\[/",
+      "weight": 6,
+      "severity": "MAJOR",
+      "description": "Direct access to superglobals without validation",
+      "remediation": "Validate and sanitize all user inputs"
+    },
+    {
+      "id": "AI-ERROR-006",
+      "name": "Unsafe eval() Usage",
+      "pattern": "/eval\\s*\\(\\s*\\$/",
+      "weight": 10,
+      "severity": "CRITICAL",
+      "description": "eval() with variable input - code injection risk",
+      "remediation": "Avoid eval() entirely or use alternative approaches"
+    },
+    {
+      "id": "AI-ERROR-007",
+      "name": "File Inclusion with User Input",
+      "pattern": "/(?:include|require|include_once|require_once)\\s*\\([^)]*\\$_(?:GET|POST|REQUEST)/",
+      "weight": 10,
+      "severity": "CRITICAL",
+      "description": "File inclusion with user-controlled path",
+      "remediation": "Use allowlist or fixed paths only"
+    },
+    {
+      "id": "AI-ERROR-008",
+      "name": "Hardcoded Credentials",
+      "pattern": "/[\"']?(?:password|passwd|pwd|secret|api_key)[\"']?\\s*[:=]\\s*[\"'][^\"']+[\"']/",
+      "weight": 10,
+      "severity": "CRITICAL",
+      "description": "Hardcoded passwords or credentials detected",
+      "remediation": "Use environment variables or secure configuration"
+    },
+    {
+      "id": "AI-ERROR-009",
+      "name": "Missing Strict Types",
+      "pattern": "/<\\?php\\s*(?!\\s*declare\\s*\\(\\s*strict_types\\s*=\\s*1\\s*\\))/i",
+      "weight": 4,
+      "severity": "MAJOR",
+      "description": "Missing strict_types declaration - type safety risk",
+      "remediation": "Add declare(strict_types=1); at the top of PHP files"
+    },
+    {
+      "id": "AI-ERROR-010",
+      "name": "Unchecked Return Values",
+      "pattern": "/\\w+\\s*=\\s*\\$this->\\w+\\(\\)\\s*;/",
+      "weight": 5,
+      "severity": "MAJOR",
+      "description": "Function return values not checked for errors",
+      "remediation": "Check return values and handle potential failures"
+    },
+    {
+      "id": "AI-ERROR-011",
+      "name": "Error Suppression Operator",
+      "pattern": "/@[a-z_]+\\s*\\(/",
+      "weight": 6,
+      "severity" : "MAJOR",
+      "description": "Error suppression operator (@) hides potential issues",
+      "remediation": "Handle errors properly instead of suppressing them"
+    },
+    {
+      "id": "AI-ERROR-012",
+      "name": "Inconsistent Error Handling",
+      "pattern": "/throw new Exception\\s*\\([^)]*\\$e->getMessage\\(\\)[^)]*\\)/",
+      "weight": 4,
+      "severity": "MINOR",
+      "description": "Generic exception re-throwing without context",
+      "remediation": "Add context when re-throwing exceptions"
+    },
+    {
+      "id": "AI-ERROR-013",
+      "name": "Potential NULL Dereference",
+      "pattern": "/\\$\\w+->\\w+\\(\\)/",
+      "weight": 6,
+      "severity": "MAJOR",
+      "description": "Method call on potentially null object",
+      "remediation": "Add null checks before method calls"
+    },
+    {
+      "id": "AI-ERROR-014",
+      "name": "Missing Exception Handling",
+      "pattern": "/new\\s+\\w+(?:Exception|Error)\\s*\\(/",
+      "weight": 3,
+      "severity": "MINOR",
+      "description": "Exception thrown but calling code may not handle it",
+      "remediation": "Document exceptions and ensure proper handling"
+    },
+    {
+      "id": "AI-ERROR-015",
+      "name": "Deprecated Function Usage",
+      "pattern": "/(?:mysql_|md5\\(\\s*\\w+\\s*\\)|preg_replace\\s*\\(.*\\/e)/",
+      "weight": 7,
+      "severity": "MAJOR",
+      "description": "Use of deprecated PHP functions",
+      "remediation": "Use modern alternatives (mysqli, password_hash, preg_replace_callback)"
+    }
+  ],
+  "metadata": {
+    "author": "AI Code Detector",
+    "version": "1.0.0",
+    "lastUpdated": "2024-01-01",
+    "supportedLanguages": ["php"],
+    "sonarqubeCompatible": true
+  }
+}

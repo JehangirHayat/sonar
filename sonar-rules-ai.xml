@@ -1,0 +1,552 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SonarQube Custom Rules for AI-Generated Code Detection
+  Repository: sonar-ai-rules
+  Description: Custom rules to detect AI-generated code patterns and common AI coding errors
+-->
+<rules>
+  
+  <!-- ==================== AI PATTERN RULES ==================== -->
+  
+  <!-- Rule: Excessive Template Comments -->
+  <rule>
+    <key>ai-pattern-001</key>
+    <name>Excessive Template Comments</name>
+    <description>
+      <![CDATA[
+        <p><strong>Detection of AI-Generated Code Pattern</strong></p>
+        <p>This rule detects excessively long template comments that are characteristic of AI-generated code.</p>
+        <p><strong>Why is this flagged?</strong></p>
+        <ul>
+          <li>AI models tend to generate very detailed, verbose documentation comments</li>
+          <li>Human-written code typically has more concise, purposeful comments</li>
+          <li>Long comments (>200 chars) often indicate automated generation</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>Review and simplify documentation comments</li>
+          <li>Focus on WHY the code exists, not WHAT it does</li>
+          <li>Keep comments under 100 characters when possible</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>INFO</severity>
+    <type>CODE_SMELL</type>
+    <tag>ai-detection</tag>
+    <tag>documentation</tag>
+    <remediation>
+      <![CDATA[Simplify excessive comments to be concise and meaningful]]>
+    </remediation>
+    <content>
+      <![CDATA[(/\*[\s\S]{200,}?\*/)]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Generic Template Comments -->
+  <rule>
+    <key>ai-pattern-002</key>
+    <name>Generic Template Comments</name>
+    <description>
+      <![CDATA[
+        <p><strong>Detection of AI-Generated Code Pattern</strong></p>
+        <p>This rule detects generic template comments that are hallmarks of AI-generated code.</p>
+        <p><strong>Why is this flagged?</strong></p>
+        <ul>
+          <li>AI often uses generic phrases like "This method" or "The following function"</li>
+          <li>Human developers typically provide more specific context</li>
+          <li>Template comments add little value to code understanding</li>
+        </ul>
+        <p><strong>Examples flagged:</strong></p>
+        <ul>
+          <li>"// This method calculates the total"</li>
+          <li>"/* The following function handles user input */"</li>
+          <li>"// In this section we process the data"</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>INFO</severity>
+    <type>CODE_SMELL</type>
+    <tag>ai-detection</tag>
+    <tag>documentation</tag>
+    <content>
+      <![CDATA[(//.*This method|//.*The following|//.*In this section|\/\*.*This function|\/\*.*The following)]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Generic Variable Names -->
+  <rule>
+    <key>ai-pattern-003</key>
+    <name>Overly Generic Variable Names</name>
+    <description>
+      <![CDATA[
+        <p><strong>Detection of AI-Generated Code Pattern</strong></p>
+        <p>This rule detects overly generic variable names commonly used by AI code generators.</p>
+        <p><strong>Why is this flagged?</strong></p>
+        <ul>
+          <li>AI tends to use generic names like $data, $result, $output, $item</li>
+          <li>Specific, descriptive variable names improve code readability</li>
+          <li>Generic names make code harder to understand and maintain</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>Use descriptive variable names that indicate purpose</li>
+          <li>Replace $data with $userData, $orderDetails, etc.</li>
+          <li>Replace $result with $calculatedTotal, $fetchedUser, etc.</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MINOR</severity>
+    <type>CODE_SMELL</type>
+    <tag>ai-detection</tag>
+    <tag>naming</tag>
+    <content>
+      <![CDATA[(\bdata\b|\bresult\b|\boutput\b|\bitem\b|\btemp\b|\binfo\b)]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Magic Numbers -->
+  <rule>
+    <key>ai-pattern-004</key>
+    <name>Magic Numbers in Loops</name>
+    <description>
+      <![CDATA[
+        <p><strong>Detection of AI-Generated Code Pattern</strong></p>
+        <p>This rule detects magic numbers in loop constructs, common in AI-generated code.</p>
+        <p><strong>Why is this flagged?</strong></p>
+        <ul>
+          <li>AI often generates loops with hardcoded limits</li>
+          <li>Magic numbers reduce code maintainability</li>
+          <li>Named constants make code more self-documenting</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MINOR</severity>
+    <type>CODE_SMELL</type>
+    <tag>ai-detection</tag>
+    <tag>bad-practice</tag>
+    <content>
+      <![CDATA[(for\s*\(\s*\$i\s*=\s*0;\s*\$i\s*<\s*[0-9]+;)]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Long Method Chains -->
+  <rule>
+    <key>ai-pattern-005</key>
+    <name>Long Method Chains</name>
+    <description>
+      <![CDATA[
+        <p><strong>Detection of AI-Generated Code Pattern</strong></p>
+        <p>This rule detects fluent interfaces with long method chains, common in AI code.</p>
+        <p><strong>Why is this flagged?</strong></p>
+        <ul>
+          <li>AI tends to generate long method chains like $obj->method1()->method2()->method3()</li>
+          <li>Long chains reduce readability and debugging ability</li>
+          <li>Breaking into intermediate variables improves maintainability</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MINOR</severity>
+    <type>CODE_SMELL</type>
+    <tag>ai-detection</tag>
+    <tag>design</tag>
+    <content>
+      <![CDATA[(->\w+\(\)->\w+\(\)->\w+\(\))]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Generic Error Messages -->
+  <rule>
+    <key>ai-pattern-006</key>
+    <name>Generic Error Messages</name>
+    <description>
+      <![CDATA[
+        <p><strong>Detection of AI-Generated Code Pattern</strong></p>
+        <p>This rule detects generic error messages like "Error" that suggest AI generation.</p>
+        <p><strong>Why is this flagged?</strong></p>
+        <ul>
+          <li>AI often throws exceptions with generic messages like "Error"</li>
+          <li>Specific error messages are crucial for debugging</li>
+          <li>Generic messages make troubleshooting difficult</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MINOR</severity>
+    <type>CODE_SMELL</type>
+    <tag>ai-detection</tag>
+    <tag>error-handling</tag>
+    <content>
+      <![CDATA[(throw new Exception\s*\(\s*["']Error["']\s*\))]]>
+    </content>
+  </rule>
+
+  <!-- ==================== AI ERROR RULES ==================== -->
+
+  <!-- Rule: Empty Try-Catch -->
+  <rule>
+    <key>ai-error-001</key>
+    <name>Empty Try-Catch Block</name>
+    <description>
+      <![CDATA[
+        <p><strong>Critical AI Coding Error Detected</strong></p>
+        <p>Empty or minimal catch blocks are a common mistake in AI-generated code that swallows exceptions.</p>
+        <p><strong>Why is this dangerous?</strong></p>
+        <ul>
+          <li>Exceptions are silently ignored, making debugging impossible</li>
+          <li>Data corruption or inconsistent state may go unnoticed</li>
+          <li>Security vulnerabilities may be hidden</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>At minimum, log the exception with full stack trace</li>
+          <li>Handle the error appropriately (retry, fallback, user notification)</li>
+          <li>Consider using custom exception types for different error scenarios</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>BLOCKER</severity>
+    <type>BUG</type>
+    <tag>ai-detection</tag>
+    <tag>error-handling</tag>
+    <tag>security</tag>
+    <content>
+      <![CDATA[(try\s*\{[^}]*\}\s*catch\s*\([^)]*\)\s*\{[^}]{0,50}\})]]>
+    </content>
+  </rule>
+
+  <!-- Rule: SQL Injection -->
+  <rule>
+    <key>ai-error-002</key>
+    <name>SQL Injection Vulnerability</name>
+    <description>
+      <![CDATA[
+        <p><strong>CRITICAL SECURITY VULNERABILITY</strong></p>
+        <p>Potential SQL injection detected - variable interpolation in SQL queries is extremely dangerous.</p>
+        <p><strong>Why is this dangerous?</strong></p>
+        <ul>
+          <li>Attackers can manipulate SQL queries to access, modify, or delete data</li>
+          <li>Authentication bypass is possible</li>
+          <li>Complete database compromise may occur</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>ALWAYS use prepared statements with parameterized queries</li>
+          <li>Example: <code>$stmt->prepare("SELECT * FROM users WHERE id = ?")</code></li>
+          <li>Bind variables: <code>$stmt->bind_param("i", $id)</code></li>
+        </ul>
+      ]]>
+    </description>
+    <severity>CRITICAL</severity>
+    <type>VULNERABILITY</type>
+    <tag>ai-detection</tag>
+    <tag>security</tag>
+    <tag>owasp-top10</tag>
+    <content>
+      <![CDATA[(->prepare\s*\(\s*["'][^"']*\$.*["'])]]>
+    </content>
+  </rule>
+
+  <!-- Rule: XSS Vulnerability -->
+  <rule>
+    <key>ai-error-003</key>
+    <name>XSS Vulnerability</name>
+    <description>
+      <![CDATA[
+        <p><strong>CRITICAL SECURITY VULNERABILITY</strong></p>
+        <p>Direct output of unsanitized user input detected - potential Cross-Site Scripting (XSS) attack.</p>
+        <p><strong>Why is this dangerous?</strong></p>
+        <ul>
+          <li>Attackers can inject malicious JavaScript</li>
+          <li>Session hijacking is possible</li>
+          <li>Defacement or phishing attacks can be launched</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>Always escape output: <code>htmlspecialchars($input, ENT_QUOTES, 'UTF-8')</code></li>
+          <li>Use templating engines with auto-escaping (Twig, Blade)</li>
+          <li>Implement Content Security Policy (CSP) headers</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>CRITICAL</severity>
+    <type>VULNERABILITY</type>
+    <tag>ai-detection</tag>
+    <tag>security</tag>
+    <tag>owasp-top10</tag>
+    <content>
+      <![CDATA[(echo\s+.*\$_(?:GET|POST|REQUEST)\[)]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Type Juggling -->
+  <rule>
+    <key>ai-error-004</key>
+    <name>Type Juggling (Loose Comparison)</name>
+    <description>
+      <![CDATA[
+        <p><strong>MAJOR CODE QUALITY ISSUE</strong></p>
+        <p>Loose comparison operator (==) detected - AI code often uses this incorrectly.</p>
+        <p><strong>Why is this problematic?</strong></p>
+        <ul>
+          <li>PHP's type juggling can cause unexpected behavior</li>
+          <li>"0" == "00" returns true</li>
+          <li>"abc" == 0 returns true</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>Use strict comparison: <code>===</code> and <code>!==</code></li>
+          <li>Compare both value AND type</li>
+          <li>Consider using type hints for better type safety</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MAJOR</severity>
+    <type>BUG</type>
+    <tag>ai-detection</tag>
+    <tag>type-safety</tag>
+    <content>
+      <![CDATA[(\s==\s(?!['"]))]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Missing Input Validation -->
+  <rule>
+    <key>ai-error-005</key>
+    <name>Missing Input Validation</name>
+    <description>
+      <![CDATA[
+        <p><strong>MAJOR SECURITY CONCERN</strong></p>
+        <p>Direct access to superglobals ($_GET, $_POST, $_REQUEST) without validation detected.</p>
+        <p><strong>Why is this problematic?</strong></p>
+        <ul>
+          <li>Unvalidated input is the source of most security vulnerabilities</li>
+          <li>Type confusion, injection attacks, and business logic bypasses are possible</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>Validate: Check if input exists and is of expected type</li>
+          <li>Sanitize: Remove or encode potentially dangerous characters</li>
+          <li>Use filter_input() or filter_var() functions</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MAJOR</severity>
+    <type>VULNERABILITY</type>
+    <tag>ai-detection</tag>
+    <tag>security</tag>
+    <content>
+      <![CDATA[(\$_(?:GET|POST|REQUEST)\[)]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Unsafe eval() -->
+  <rule>
+    <key>ai-error-006</key>
+    <name>Unsafe eval() Usage</name>
+    <description>
+      <![CDATA[
+        <p><strong>CRITICAL SECURITY VULNERABILITY</strong></p>
+        <p>eval() function used with variable input - potential code injection.</p>
+        <p><strong>Why is this dangerous?</strong></p>
+        <ul>
+          <li>eval() executes arbitrary code</li>
+          <li>If user input reaches eval(), complete system compromise is possible</li>
+          <li>Almost always avoidable with better design</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>NEVER pass user input to eval()</li>
+          <li>Use alternative approaches: callbacks, strategy pattern, look-up tables</li>
+          <li>If absolutely necessary, implement strict allowlists</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>CRITICAL</severity>
+    <type>VULNERABILITY</type>
+    <tag>ai-detection</tag>
+    <tag>security</tag>
+    <content>
+      <![CDATA[(eval\s*\(\s*\$)]]>
+    </content>
+  </rule>
+
+  <!-- Rule: File Inclusion with User Input -->
+  <rule>
+    <key>ai-error-007</key>
+    <name>File Inclusion with User Input</name>
+    <description>
+      <![CDATA[
+        <p><strong>CRITICAL SECURITY VULNERABILITY</strong></p>
+        <p>File inclusion (include/require) with user-controlled path detected.</p>
+        <p><strong>Why is this dangerous?</strong></p>
+        <ul>
+          <li>Remote file inclusion (RFI) attacks are possible</li>
+          <li>Local file inclusion (LFI) can leak sensitive files</li>
+          <li>Arbitrary code execution may be achieved</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>Never include files based on user input</li>
+          <li>Use allowlist of permitted files</li>
+          <li>Store includes in non-web-accessible directories</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>CRITICAL</severity>
+    <type>VULNERABILITY</type>
+    <tag>ai-detection</tag>
+    <tag>security</tag>
+    <content>
+      <![CDATA[((?:include|require|include_once|require_once)\s*\([^)]*\$_(?:GET|POST|REQUEST))]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Hardcoded Credentials -->
+  <rule>
+    <key>ai-error-008</key>
+    <name>Hardcoded Credentials</name>
+    <description>
+      <![CDATA[
+        <p><strong>CRITICAL SECURITY VULNERABILITY</strong></p>
+        <p>Hardcoded passwords, API keys, or credentials detected in source code.</p>
+        <p><strong>Why is this dangerous?</strong></p>
+        <ul>
+          <li>Credentials are exposed in version control</li>
+          <li>Anyone with code access can use the credentials</li>
+          <li>Credential rotation becomes impossible</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>Use environment variables</li>
+          <li>Store secrets in secure vaults (HashiCorp Vault, AWS Secrets Manager)</li>
+          <li>Use .env files (not committed to version control)</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>CRITICAL</severity>
+    <type>VULNERABILITY</type>
+    <tag>ai-detection</tag>
+    <tag>security</tag>
+    <tag>owasp-top10</tag>
+    <content>
+      <![CDATA[(["']?(?:password|passwd|pwd|secret|api_key|apikey)["']?\s*[:=]\s*["'][^"']+["'])]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Missing Strict Types -->
+  <rule>
+    <key>ai-error-009</key>
+    <name>Missing Strict Types Declaration</name>
+    <description>
+      <![CDATA[
+        <p><strong>MAJOR TYPE SAFETY CONCERN</strong></p>
+        <p>PHP file without strict_types declaration detected.</p>
+        <p><strong>Why is this important?</strong></p>
+        <ul>
+          <li>Without strict_types, PHP performs implicit type coercion</li>
+          <li>Type coercion can cause subtle, hard-to-debug bugs</li>
+          <li>AI-generated code often omits this for broader compatibility</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>Add <code>declare(strict_types=1);</code> at the top of PHP files</li>
+          <li>Ensure all files use strict typing</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MAJOR</severity>
+    <type>CODE_SMELL</type>
+    <tag>ai-detection</tag>
+    <tag>type-safety</tag>
+    <content>
+      <![CDATA[(<\?php\s*(?!\s*declare\s*\(\s*strict_types\s*=\s*1\s*\)))]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Error Suppression -->
+  <rule>
+    <key>ai-error-010</key>
+    <name>Error Suppression Operator</name>
+    <description>
+      <![CDATA[
+        <p><strong>MAJOR CODE QUALITY ISSUE</strong></p>
+        <p>Error suppression operator (@) detected - hides potential issues.</p>
+        <p><strong>Why is this problematic?</strong></p>
+        <ul>
+          <li>Errors are silently ignored</li>
+          <li>Debugging becomes extremely difficult</li>
+          <li>Performance impact from error suppression</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>Handle errors properly with try-catch</li>
+          <li>Use proper error handling with custom error handlers</li>
+          <li>Log errors instead of suppressing them</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MAJOR</severity>
+    <type>CODE_SMELL</type>
+    <tag>ai-detection</tag>
+    <tag>error-handling</tag>
+    <content>
+      <![CDATA[(@[a-z_]+\s*\()]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Unchecked Return Values -->
+  <rule>
+    <key>ai-error-011</key>
+    <name>Unchecked Return Values</name>
+    <description>
+      <![CDATA[
+        <p><strong>MAJOR CODE QUALITY ISSUE</strong></p>
+        <p>Function call with unchecked return value detected.</p>
+        <p><strong>Why is this problematic?</strong></p>
+        <ul>
+          <li>Return values may indicate errors or special conditions</li>
+          <li>Ignoring them can lead to silent failures</li>
+          <li>AI code often omits proper error checking</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MAJOR</severity>
+    <type>BUG</type>
+    <tag>ai-detection</tag>
+    <tag>error-handling</tag>
+    <content>
+      <![CDATA[(\w+\s*=\s*\$this->\w+\(\)\s*;)]]>
+    </content>
+  </rule>
+
+  <!-- Rule: Deprecated Functions -->
+  <rule>
+    <key>ai-error-012</key>
+    <name>Deprecated Function Usage</name>
+    <description>
+      <![CDATA[
+        <p><strong>MAJOR CODE QUALITY ISSUE</strong></p>
+        <p>Use of deprecated PHP functions detected.</p>
+        <p><strong>Why is this problematic?</strong></p>
+        <ul>
+          <li>Deprecated functions may be removed in future PHP versions</li>
+          <li>They often have security vulnerabilities</li>
+          <li>Modern alternatives are more secure and performant</li>
+        </ul>
+        <p><strong>Remediation:</strong></p>
+        <ul>
+          <li>mysql_* → Use MySQLi or PDO</li>
+          <li>md5() for passwords → Use password_hash()</li>
+          <li>preg_replace with /e → Use preg_replace_callback()</li>
+        </ul>
+      ]]>
+    </description>
+    <severity>MAJOR</severity>
+    <type>CODE_SMELL</type>
+    <tag>ai-detection</tag>
+    <tag>compatibility</tag>
+    <content>
+      <![CDATA[((?:mysql_|md5\s*\(\s*\w+\s*\)|preg_replace\s*\(.*\/e))]]>
+    </content>
+  </rule>
+
+</rules>

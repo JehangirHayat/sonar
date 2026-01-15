@@ -1,0 +1,71 @@
+# PHPStan Configuration for AI Code Detection
+# Enhanced configuration to detect AI-generated code patterns
+
+parameters:
+  # Level 8 (maximum) for strictest analysis
+  level: 8
+  
+  # Paths to analyze
+  paths:
+    - src
+  
+  # Exclude generated files
+  excludePaths:
+    - vendor
+  
+  # Custom rules for AI detection
+  customRulesetUsed: true
+  
+  # Enable error formatting for CI/CD
+  errorFormat: table
+  
+  # Treat these issues as AI-related
+  aiRelatedRules:
+    - PHPStan\Rules\DeadCode\UnusedFunctionRule
+    - PHPStan\Rules\DeadCode\UnusedVariableRule
+    - PHPStan\Rules\PhpDoc\IncompatibleTypeRule
+    - PHPStan\Rules\Arrays\InvalidKeyInArrayDimFetchRule
+    - PHPStan\Rules\Operators\OperandInArithmeticPostDecrementRule
+  
+  # Baseline for existing issues
+  baseline:
+    ignoreErrors:
+      - '#^Variable \$conn might not be defined#'
+      - '#^Call to an undefined method mysqli::connect_error#'
+  
+  # Dynamic analysis settings
+  dynamicConstantNames:
+    - PHP_VERSION
+    - PHP_OS
+  
+  # Class reflection
+  universalObjectCratesClasses:
+    - stdClass
+    - ArrayObject
+  
+  # Type inference
+  typeAliases:
+    AIProbability: 'int<0, 100>'
+    AIDetectionResult: 'array{probability: int, patterns: array, errors: array}'
+  
+# Enhanced rules for AI code detection
+services:
+  -
+    class: AiCodePatternsRule
+    tags:
+      - phpstan.rules.rule
+  
+  -
+    class: GenericNamingRule
+    tags:
+      - phpstan.rules.rule
+
+  -
+    class: TemplateCommentRule
+    tags:
+      - phpstan.rules.rule
+
+# Include additional analysis
+includes:
+  - phar://phpstan/phpstan/conf/level8.neon
+
