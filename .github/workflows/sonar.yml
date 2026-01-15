@@ -1,4 +1,4 @@
-name: SonarQube Analisia
+name: SonarQube + AI Detection Analysis
 
 on:
   push:
@@ -8,22 +8,80 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
+  ai-detection:
+    name: AI Code Detection
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      
+      - name: Run AI Code Analyzer
+        run: |
+          echo "=== AI Code Detection Analysis ==="
+          php ai-code-analyzer.php src
+          
+      - name: Check AI Probability
+        id: ai-check
+        run: |
+          RESULT=$(php ai-code-analyzer.php src 2>/dev/null)
+          AI_PROB=$(echo "$RESULT" | grep -oP 'AI Probability: \K[0-9]+' || echo "0")
+          ERRORS=$(echo "$RESULT" | grep -oP 'AI Errors Found: \K[0-9]+' || echo "0")
+          
+          echo "AI Probability: $AI_PROB%"
+          echo "AI Errors: $ERRORS"
+          
+          # Fail if critical AI errors found
+          if [ "$ERRORS" -gt 0 ]; then
+            echo "❌ Critical AI-generated code errors detected!"
+            echo "These issues must be fixed before merging."
+            exit 1
+          fi
+          
+          # Warning if high AI probability
+          if [ "$AI_PROB" -ge 50 ]; then
+            echo "⚠️  High AI probability detected ($AI_PROB%)"
+            echo "::warning::High AI code probability detected. Review recommended."
+          fi
+          
+      - name: Upload AI Analysis Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-analysis-report
+          path: sonar-ai-report.json
+        if: always()
+
   build:
     name: Build and Analyze
     runs-on: ubuntu-latest
+    needs: ai-detection  # Run after AI detection
 
     steps:
       - name: Kodea deskargatu (Checkout)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Historia osoa behar da analisi zehatz erako
-          # 1. URRATSA: Analisia exekutatu
+      
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+      
+      # 1. URRATSA: Analisia exekutatu
       - name: SonarQube Scan exekutatu
         uses: sonarsource/sonarqube-scan-action@v3.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
-          # 2. URRATSA: Emaitza egiaztatu (Pipeline-a apurtu erroreak)
+      
+      # 2. URRATSA: Emaitza egiaztatu (Pipeline-a apurtu erroreak)
       - name: Quality Gate Egiaztatu
         uses: sonarsource/sonarqube-quality-gate-action@v1.1.0
         timeout-minutes: 5
